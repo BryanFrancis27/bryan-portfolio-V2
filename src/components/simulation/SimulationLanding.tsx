@@ -1,0 +1,115 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { BootSequence } from "@/components/simulation/BootSequence";
+import { DigitalConsciousnessCore } from "@/components/landing/DigitalConsciousnessCore";
+import { SimulationEntryButton } from "@/components/simulation/SimulationEntryButton";
+import { SystemBackground } from "@/components/shared/SystemBackground";
+import { useCallback, useState } from "react";
+
+export function SimulationLanding() {
+  const [entering, setEntering] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+  const handleBootComplete = useCallback(() => setIsReady(true), []);
+
+  return (
+    <main className="relative min-h-screen overflow-x-hidden bg-background px-4 py-5 text-foreground sm:px-6 lg:px-8">
+      <SystemBackground />
+      <motion.div
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.026] to-transparent"
+        animate={{ y: ["-46%", "126%"] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+        aria-hidden="true"
+      />
+      <div className="pointer-events-none absolute inset-x-10 top-24 h-px glyph-line opacity-30" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-x-20 bottom-16 h-px glyph-line opacity-20" aria-hidden="true" />
+
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-2.5rem)] max-w-7xl flex-col">
+        <header className="flex items-center justify-between gap-4 border-b border-white/[0.08] py-4">
+          <div>
+            <p className="font-mono text-xl tracking-[0.2em] text-white">
+              BOS
+            </p>
+            {/* <p className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              Artificial Intelligence Operating System
+            </p> */}
+          </div>
+          <span className="border-l border-white/18 pl-3 font-mono text-xs uppercase tracking-[0.16em] text-white">
+            {isReady ? "Active" : "Waking"}
+          </span>
+        </header>
+
+        <section className="grid flex-1 items-center gap-10 py-8 lg:grid-cols-[0.82fr_1.18fr]">
+          <div className="space-y-6 lg:py-8">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+              <p className="font-mono text-sm uppercase tracking-[0.24em] text-muted-foreground">
+                System Activation Sequence
+              </p>
+              <h1 className="mt-4 text-5xl font-semibold tracking-normal text-white sm:text-6xl lg:text-7xl">
+                BryanOS
+              </h1>
+              <p className="mt-3 font-mono text-sm uppercase tracking-[0.22em] text-zinc-300">
+                Artificial Intelligence Operating System
+              </p>
+              <p className="mt-5 max-w-xl text-base leading-7 text-muted-foreground">
+                Software Engineer, Full Stack Developer, Product Builder, and AI-powered Product Workflows
+              </p>
+            </motion.div>
+
+            <BootSequence onComplete={handleBootComplete} />
+
+            <div className="flex flex-wrap items-center gap-3">
+              <SimulationEntryButton onEnter={() => setEntering(true)} disabled={!isReady || entering} />
+              <span className="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                {isReady ? "Command center ready" : "Awaiting core synchronization"}
+              </span>
+            </div>
+          </div>
+
+          <div className="relative flex flex-col items-center overflow-visible">
+            <DigitalConsciousnessCore entering={entering} />
+            <div className="mx-auto grid w-full max-w-md grid-cols-2 gap-3 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
+              <span className="border-t border-white/[0.09] bg-white/[0.018] px-3 py-2">
+                Core Sync: Stable <span className="ml-2 text-emerald-300/80">•</span>
+              </span>
+              <span className="border-t border-white/[0.09] bg-white/[0.018] px-3 py-2">
+                Access: Verified <span className="ml-2 text-emerald-300/80">•</span>
+              </span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {entering ? (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/96"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.35 }}
+        >
+          <motion.div
+            className="h-72 w-72 border border-white/25 bg-white/[0.08] [clip-path:polygon(50%_0%,86%_18%,100%_50%,86%_82%,50%_100%,14%_82%,0_50%,14%_18%)]"
+            initial={{ scale: 0.35, opacity: 0.48, rotate: 0 }}
+            animate={{ scale: 4.4, opacity: 0, rotate: 32 }}
+            transition={{ duration: 1.05, ease: "easeInOut" }}
+            aria-hidden="true"
+          />
+          <motion.div
+            className="absolute h-px w-2/3 bg-gradient-to-r from-transparent via-white/50 to-transparent"
+            initial={{ scaleX: 0, opacity: 0 }}
+            animate={{ scaleX: 1, opacity: [0, 0.8, 0] }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            aria-hidden="true"
+          />
+          <p className="absolute font-mono text-sm uppercase tracking-[0.2em] text-white">
+            OPENING COMMAND CENTER...
+          </p>
+        </motion.div>
+      ) : null}
+    </main>
+  );
+}
