@@ -8,8 +8,8 @@ import { skillGroups } from "@/data/skills";
 export default function ExperiencePage() {
   return (
     <DashboardShell>
-      <div className="space-y-8">
-        <section className="max-w-3xl">
+      <div className="w-full min-w-0 space-y-8">
+        <section className="max-w-5xl">
           <p className="font-mono text-sm uppercase tracking-[0.2em] text-zinc-400">
             Experience Matrix
           </p>
@@ -20,7 +20,7 @@ export default function ExperiencePage() {
         </section>
 
         <CommandCenterCard label="Operating Profile" title="How Bryan Builds">
-          <ul className="grid gap-3 md:grid-cols-3">
+          <ul className="grid min-w-0 gap-3 md:grid-cols-3">
             {operatingModes.map((mode) => (
               <li
                 key={mode}
@@ -32,7 +32,7 @@ export default function ExperiencePage() {
           </ul>
         </CommandCenterCard>
 
-        <section className="grid gap-5 lg:grid-cols-2">
+        <section className="grid min-w-0 gap-5 lg:grid-cols-2 2xl:grid-cols-3">
           {experienceRoles.map((role) => (
             <CommandCenterCard
               key={`${role.company}-${role.role}`}
@@ -70,7 +70,7 @@ export default function ExperiencePage() {
           ))}
         </section>
 
-        <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <section className="grid min-w-0 gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {skillGroups.map((group) => (
             <SkillGroup key={group.category} group={group} />
           ))}

@@ -9,7 +9,7 @@ export function SystemCard({ system }: { system: System }) {
     <Card className="scan-line h-full transition duration-300 hover:-translate-y-0.5 hover:border-white/20">
       <CardHeader>
         <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
+          <div className="min-w-0">
             <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-md border border-white/14 bg-white/[0.035] text-white">
               <ServerCog className="h-5 w-5" aria-hidden="true" />
             </div>

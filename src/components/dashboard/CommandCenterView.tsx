@@ -19,9 +19,9 @@ const quickLinks = [
 
 export function CommandCenterView() {
   return (
-    <div className="space-y-8">
-      <MotionSection className="grid gap-6 lg:grid-cols-[1.45fr_0.55fr]">
-        <section className="scan-line alien-panel rounded-lg border border-white/[0.08] p-6 backdrop-blur md:p-8">
+    <div className="w-full min-w-0 space-y-8">
+      <MotionSection className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(20rem,0.55fr)] 2xl:grid-cols-[minmax(0,1.6fr)_minmax(24rem,0.4fr)]">
+        <section className="scan-line alien-panel min-w-0 rounded-lg border border-white/[0.08] p-6 backdrop-blur md:p-8">
           <div className="mb-8 flex flex-wrap items-center gap-3">
             <SystemStatusBadge status="ACTIVE" />
             <span className="border-l border-white/16 pl-3 font-mono text-xs uppercase tracking-[0.16em] text-zinc-300">
@@ -31,7 +31,7 @@ export function CommandCenterView() {
           <p className="font-mono text-sm uppercase tracking-[0.2em] text-muted-foreground">
             BryanOS Command Center
           </p>
-          <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-normal text-white sm:text-5xl lg:text-6xl">
+          <h1 className="mt-4 max-w-5xl text-4xl font-semibold tracking-normal text-white sm:text-5xl lg:text-6xl">
             Bryan Encarnacion
           </h1>
           <p className="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-zinc-300">
@@ -52,7 +52,7 @@ export function CommandCenterView() {
           </div>
         </section>
 
-        <aside className="alien-panel rounded-lg border border-white/[0.08] p-6 backdrop-blur">
+        <aside className="alien-panel min-w-0 rounded-lg border border-white/[0.08] p-6 backdrop-blur">
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
@@ -70,7 +70,7 @@ export function CommandCenterView() {
                 key={system.name}
                 className="flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.08] bg-white/[0.018] px-1 py-3"
               >
-                <div>
+                <div className="min-w-0">
                   <span className="font-medium text-white">{system.name}</span>
                   <p className="mt-1 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
                     {system.name === "LunarLedger" ? "Personal project" : "Artificial operating system"}
@@ -83,13 +83,13 @@ export function CommandCenterView() {
         </aside>
       </MotionSection>
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <section className="grid min-w-0 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {metrics.map((metric) => (
           <MetricCard key={metric.label} metric={metric} />
         ))}
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+      <section className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] 2xl:grid-cols-[minmax(24rem,0.75fr)_minmax(0,1.25fr)]">
         <CommandCenterCard label="Active Build Cycle" title="Current Focus">
           <ul className="space-y-3 text-sm leading-6 text-muted-foreground">
             {currentFocus.map((item) => (
@@ -102,7 +102,7 @@ export function CommandCenterView() {
         </CommandCenterCard>
 
         <CommandCenterCard label="Signal Activity" title="Recent Signals">
-          <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
+          <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
             <ul className="space-y-3 text-sm leading-6 text-muted-foreground">
               {recentActivity.map((item) => (
                 <li key={item} className="border-l border-white/[0.12] bg-white/[0.018] px-4 py-3">
@@ -115,7 +115,7 @@ export function CommandCenterView() {
         </CommandCenterCard>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <section className="grid min-w-0 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {quickLinks.map((link) => (
           <Link
             key={link.href}

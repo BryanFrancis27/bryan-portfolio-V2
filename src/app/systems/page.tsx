@@ -5,8 +5,8 @@ import { DashboardShell } from "@/components/layout/DashboardShell";
 export default function SystemsPage() {
   return (
     <DashboardShell>
-      <div className="space-y-8">
-        <section className="max-w-3xl">
+      <div className="w-full min-w-0 space-y-8">
+        <section className="max-w-5xl">
           <p className="font-mono text-sm uppercase tracking-[0.2em] text-zinc-400">
             System Registry
           </p>
@@ -15,7 +15,7 @@ export default function SystemsPage() {
             Bryan&apos;s personal systems shown as operating files. Company work stays in the Experience Matrix.
           </p>
         </section>
-        <section className="grid gap-6 lg:grid-cols-2">
+        <section className="grid min-w-0 gap-6 lg:grid-cols-2 2xl:grid-cols-3">
           {systems.map((system) => (
             <SystemCard key={system.name} system={system} />
           ))}

@@ -13,7 +13,7 @@ import type { ActivityPoint } from "@/types/dashboard";
 
 export function ActivityChart({ data }: { data: ActivityPoint[] }) {
   return (
-    <div className="h-64 w-full" aria-label="Engineering activity chart">
+    <div className="h-64 min-w-0 overflow-hidden" aria-label="Engineering activity chart">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ left: -20, right: 8, top: 8, bottom: 0 }}>
           <defs>

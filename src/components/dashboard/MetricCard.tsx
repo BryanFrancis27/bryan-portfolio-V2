@@ -10,7 +10,7 @@ export function MetricCard({ metric }: { metric: Metric }) {
         </p>
       </CardHeader>
       <CardContent>
-        <div className="flex items-end justify-between gap-4">
+        <div className="flex min-w-0 flex-wrap items-end justify-between gap-4">
           <p className="font-mono text-4xl font-semibold text-white">{metric.value}</p>
           <span className="border-l border-white/16 pl-2 font-mono text-xs text-zinc-300">
             {metric.trend}

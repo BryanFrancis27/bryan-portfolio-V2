@@ -9,7 +9,7 @@ import { contactChannels } from "@/data/contact";
 export default function ContactPage() {
   return (
     <DashboardShell>
-      <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+      <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(18rem,0.8fr)_minmax(0,1.2fr)] 2xl:grid-cols-[minmax(22rem,0.7fr)_minmax(0,1.3fr)]">
         <section className="alien-panel rounded-lg border border-white/[0.08] p-6 md:p-8">
           <div className="overflow-hidden rounded-lg border border-white/[0.08] bg-white/[0.025] grayscale">
             <Image
@@ -30,7 +30,7 @@ export default function ContactPage() {
           </div>
         </section>
 
-        <section className="space-y-4">
+        <section className="min-w-0 space-y-4">
           <div className="alien-panel rounded-lg border border-white/[0.08] p-6 md:p-8">
             <p className="font-mono text-sm uppercase tracking-[0.2em] text-zinc-400">
               Communication Port
@@ -69,11 +69,11 @@ export default function ContactPage() {
                   href={channel.href}
                   className="alien-panel group rounded-lg border border-white/[0.08] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-white/20"
                 >
-                  <div className="flex items-start gap-4">
+                  <div className="flex min-w-0 items-start gap-4">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-white/14 bg-white/[0.035] text-white">
                       <Icon className="h-5 w-5" aria-hidden="true" />
                     </span>
-                    <div>
+                    <div className="min-w-0">
                       <h2 className="text-lg font-semibold text-white">{channel.label}</h2>
                       <p className="mt-2 text-sm leading-6 text-muted-foreground">{channel.detail}</p>
                     </div>

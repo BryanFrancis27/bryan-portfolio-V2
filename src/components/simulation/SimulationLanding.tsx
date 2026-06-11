@@ -24,7 +24,7 @@ export function SimulationLanding() {
       <div className="pointer-events-none absolute inset-x-10 top-24 h-px glyph-line opacity-30" aria-hidden="true" />
       <div className="pointer-events-none absolute inset-x-20 bottom-16 h-px glyph-line opacity-20" aria-hidden="true" />
 
-      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-2.5rem)] max-w-7xl flex-col">
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-2.5rem)] w-full max-w-[112rem] flex-col">
         <header className="flex items-center justify-between gap-4 border-b border-white/[0.08] py-4">
           <div>
             <p className="font-mono text-xl tracking-[0.2em] text-white">
@@ -39,8 +39,8 @@ export function SimulationLanding() {
           </span>
         </header>
 
-        <section className="grid flex-1 items-center gap-10 py-8 lg:grid-cols-[0.82fr_1.18fr]">
-          <div className="space-y-6 lg:py-8">
+        <section className="grid min-w-0 flex-1 items-center gap-10 py-8 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] 2xl:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)]">
+          <div className="min-w-0 space-y-6 lg:py-8">
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -55,7 +55,7 @@ export function SimulationLanding() {
               <p className="mt-3 font-mono text-sm uppercase tracking-[0.22em] text-zinc-300">
                 Artificial Intelligence Operating System
               </p>
-              <p className="mt-5 max-w-xl text-base leading-7 text-muted-foreground">
+              <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground">
                 Software Engineer, Full Stack Developer, Product Builder, and AI-powered Product Workflows
               </p>
             </motion.div>
@@ -70,14 +70,14 @@ export function SimulationLanding() {
             </div>
           </div>
 
-          <div className="relative flex flex-col items-center overflow-visible">
+          <div className="relative flex min-w-0 flex-col items-center overflow-visible">
             <DigitalConsciousnessCore entering={entering} />
-            <div className="mx-auto grid w-full max-w-md grid-cols-2 gap-3 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
+            <div className="mx-auto grid w-full max-w-md gap-3 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground sm:grid-cols-2">
               <span className="border-t border-white/[0.09] bg-white/[0.018] px-3 py-2">
-                Core Sync: Stable <span className="ml-2 text-emerald-300/80">•</span>
+                Core Sync: Stable <span className="ml-2 text-emerald-300/80">&bull;</span>
               </span>
               <span className="border-t border-white/[0.09] bg-white/[0.018] px-3 py-2">
-                Access: Verified <span className="ml-2 text-emerald-300/80">•</span>
+                Access: Verified <span className="ml-2 text-emerald-300/80">&bull;</span>
               </span>
             </div>
           </div>

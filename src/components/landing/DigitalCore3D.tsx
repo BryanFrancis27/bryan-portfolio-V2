@@ -21,6 +21,7 @@ type PlaneSpec = {
 
 const MASK_SURFACE_OPACITY = 0.94;
 const INTRO_DURATION = 4.2;
+const BURST_DURATION = 0.86;
 
 function clamp01(value: number) {
   return THREE.MathUtils.clamp(value, 0, 1);
@@ -57,8 +58,11 @@ function ConsciousnessField({ entering = false, reduceMotion = false, activated 
   const core = useRef<THREE.Mesh>(null);
   const lattice = useRef<THREE.Mesh>(null);
   const particles = useRef<THREE.Points>(null);
+  const glitterDust = useRef<THREE.Points>(null);
   const coreLight = useRef<THREE.PointLight>(null);
   const activationLevel = useRef(0);
+  const burstStart = useRef(-1);
+  const wasActivated = useRef(false);
 
   const particleGeometry = useMemo(() => {
     const geometry = new THREE.BufferGeometry();
@@ -80,6 +84,33 @@ function ConsciousnessField({ entering = false, reduceMotion = false, activated 
     return geometry;
   }, []);
 
+  const glitterDustGeometry = useMemo(() => {
+    const geometry = new THREE.BufferGeometry();
+    const positions: number[] = [];
+    const directions: number[] = [];
+    const sizes: number[] = [];
+
+    for (let index = 0; index < 72; index += 1) {
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(THREE.MathUtils.randFloatSpread(1.6));
+      const radius = 0.62 + Math.random() * 0.18;
+      const direction = new THREE.Vector3(
+        Math.sin(phi) * Math.cos(theta),
+        Math.sin(phi) * Math.sin(theta),
+        Math.cos(phi) * 0.58,
+      ).normalize();
+
+      positions.push(direction.x * radius, direction.y * radius, direction.z * radius);
+      directions.push(direction.x, direction.y, direction.z);
+      sizes.push(0.62 + Math.random() * 0.38);
+    }
+
+    geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+    geometry.setAttribute("sparkDirection", new THREE.Float32BufferAttribute(directions, 3));
+    geometry.setAttribute("sparkSize", new THREE.Float32BufferAttribute(sizes, 1));
+    return geometry;
+  }, []);
+
   useFrame(({ clock }, delta) => {
     if (!field.current) return;
 
@@ -87,16 +118,27 @@ function ConsciousnessField({ entering = false, reduceMotion = false, activated 
     const energyProgress = reduceMotion ? 1 : smoothStep((clock.elapsedTime - 0.15) / 1.45);
     const formationProgress = reduceMotion ? 1 : smoothStep((clock.elapsedTime - 0.9) / 1.7);
     const syncSurge = reduceMotion ? 0 : Math.sin(clamp01((clock.elapsedTime - 2.65) / 0.95) * Math.PI);
+    if (activated && !wasActivated.current) {
+      burstStart.current = clock.elapsedTime;
+    }
+    wasActivated.current = activated;
+
+    const burstAge = burstStart.current < 0 ? BURST_DURATION : clock.elapsedTime - burstStart.current;
+    const burstProgress = clamp01(burstAge / BURST_DURATION);
+    const burstActive = burstAge < BURST_DURATION;
+    const burstScatter = burstActive ? easeOutCubic(burstProgress) : 0;
+    const dustGlow = burstActive ? Math.sin(clamp01(burstProgress / 0.72) * Math.PI) * (1 - smoothStep((burstProgress - 0.72) / 0.28)) : 0;
+    const peakGlow = burstActive ? Math.sin(clamp01((burstProgress - 0.22) / 0.78) * Math.PI) : 0;
     const activationTarget = activated ? 1 : 0;
     activationLevel.current = reduceMotion
       ? activationTarget * 0.42
       : THREE.MathUtils.damp(activationLevel.current, activationTarget, activated ? 9 : 3.6, delta);
     const activation = activationLevel.current;
-    const activationPulse = activation * 0.95;
+    const activationPulse = activation * 0.48 + peakGlow * 0.52;
 
     if (!reduceMotion) {
-      field.current.rotation.y += delta * (0.018 + introProgress * 0.027 + activation * 0.055);
-      field.current.rotation.z = Math.sin(clock.elapsedTime * 0.22) * 0.035 + activation * 0.018;
+      field.current.rotation.y += delta * (0.018 + introProgress * 0.027);
+      field.current.rotation.z = Math.sin(clock.elapsedTime * 0.22) * 0.035;
     }
 
     const livingPulse = reduceMotion
@@ -107,38 +149,38 @@ function ConsciousnessField({ entering = false, reduceMotion = false, activated 
       : Math.sin(clock.elapsedTime * 0.82) * 0.012 + Math.sin(clock.elapsedTime * 1.63) * 0.008;
 
     if (aura.current) {
-      aura.current.scale.setScalar((entering ? 1.08 : 1) * (0.82 + energyProgress * 0.18) * livingPulse * (1 + activationPulse * 0.18));
+      aura.current.scale.setScalar((entering ? 1.08 : 1) * (0.82 + energyProgress * 0.18) * livingPulse * (1 + peakGlow * 0.018));
       const material = aura.current.material as THREE.MeshBasicMaterial;
       material.opacity = reduceMotion
         ? 0.07 + activation * 0.08
-        : (0.075 + luminance + syncSurge * 0.045 + activationPulse * 0.16) * energyProgress;
+        : (0.075 + luminance + syncSurge * 0.045 + activationPulse * 0.19) * energyProgress;
     }
 
     if (energyBurst.current) {
-      energyBurst.current.scale.setScalar((entering ? 1.08 : 1) * (0.72 + formationProgress * 0.28 + activationPulse * 0.46));
+      energyBurst.current.scale.setScalar((entering ? 1.08 : 1) * (0.72 + formationProgress * 0.28 + peakGlow * 0.018));
       const material = energyBurst.current.material as THREE.MeshBasicMaterial;
       material.opacity = reduceMotion
-        ? activation * 0.1
-        : activationPulse * 0.22 * formationProgress;
+        ? activation * 0.08
+        : (dustGlow * 0.08 + peakGlow * 0.16) * formationProgress;
     }
 
     if (glow.current) {
       glow.current.scale.setScalar(
-        (entering ? 1.14 : 1) *
+          (entering ? 1.14 : 1) *
           (0.78 + formationProgress * 0.22) *
-          (1 + (livingPulse - 1) * 0.72 + activationPulse * 0.2),
+          (1 + (livingPulse - 1) * 0.72 + peakGlow * 0.018),
       );
       const material = glow.current.material as THREE.MeshBasicMaterial;
       material.opacity = reduceMotion
         ? 0.09 + activation * 0.095
-        : (0.1 + luminance * 1.35 + syncSurge * 0.055 + activationPulse * 0.18) * formationProgress;
+        : (0.1 + luminance * 1.35 + syncSurge * 0.055 + activationPulse * 0.2) * formationProgress;
     }
 
     if (core.current) {
       core.current.scale.setScalar(
         reduceMotion
           ? 1 + activation * 0.045
-          : (0.68 + formationProgress * 0.32) * (1 + Math.sin(clock.elapsedTime * 1.14) * 0.024 + activationPulse * 0.085),
+          : (0.68 + formationProgress * 0.32) * (1 + Math.sin(clock.elapsedTime * 1.14) * 0.024 + peakGlow * 0.014),
       );
       const material = core.current.material as THREE.MeshBasicMaterial;
       material.opacity = reduceMotion
@@ -149,22 +191,52 @@ function ConsciousnessField({ entering = false, reduceMotion = false, activated 
     if (coreLight.current) {
       coreLight.current.intensity = reduceMotion
         ? 0.62 + activation * 0.35
-        : (0.68 + Math.abs(luminance) * 6 + syncSurge * 0.42 + activationPulse * 1.15) * energyProgress;
+        : (0.68 + Math.abs(luminance) * 6 + syncSurge * 0.42 + dustGlow * 0.32 + peakGlow * 1.05) * energyProgress;
     }
 
     if (particles.current && !reduceMotion) {
-      particles.current.rotation.y -= delta * (0.03 + activation * 0.08);
+      particles.current.rotation.y -= delta * 0.03;
       const material = particles.current.material as THREE.PointsMaterial;
       material.opacity =
-        (0.24 + Math.sin(clock.elapsedTime * 0.9) * 0.045 + activationPulse * 0.18) *
+        (0.24 + Math.sin(clock.elapsedTime * 0.9) * 0.045) *
         smoothStep((clock.elapsedTime - 0.45) / 1.35);
+    }
+
+    if (glitterDust.current) {
+      const material = glitterDust.current.material as THREE.PointsMaterial;
+
+      if (reduceMotion) {
+        material.opacity = 0;
+      } else {
+        const scatter = burstScatter;
+        const position = glitterDust.current.geometry.getAttribute("position") as THREE.BufferAttribute;
+        const direction = glitterDust.current.geometry.getAttribute("sparkDirection") as THREE.BufferAttribute;
+        const sparkSize = glitterDust.current.geometry.getAttribute("sparkSize") as THREE.BufferAttribute;
+
+        for (let index = 0; index < position.count; index += 1) {
+          const baseRadius = 0.6 + sparkSize.getX(index) * 0.16;
+          const outward = scatter * (0.42 + sparkSize.getX(index) * 0.26);
+          const drift = Math.sin(clock.elapsedTime * 2.6 + index * 0.47) * 0.012 * scatter;
+
+          position.setXYZ(
+            index,
+            direction.getX(index) * (baseRadius + outward) + drift,
+            direction.getY(index) * (baseRadius + outward) - drift * 0.4,
+            direction.getZ(index) * (baseRadius * 0.82 + outward * 0.65),
+          );
+        }
+
+        position.needsUpdate = true;
+        glitterDust.current.rotation.y += delta * 0.08;
+        material.opacity = dustGlow * 0.54;
+      }
     }
 
     if (lattice.current) {
       const material = lattice.current.material as THREE.MeshBasicMaterial;
       material.opacity = reduceMotion
-        ? 0.09 + activation * 0.045
-        : (0.09 + activationPulse * 0.075) * smoothStep((clock.elapsedTime - 1.25) / 1.2);
+        ? 0.09
+        : 0.09 * smoothStep((clock.elapsedTime - 1.25) / 1.2);
     }
   });
 
@@ -228,6 +300,16 @@ function ConsciousnessField({ entering = false, reduceMotion = false, activated 
           blending={THREE.AdditiveBlending}
         />
       </points>
+      <points ref={glitterDust} geometry={glitterDustGeometry}>
+        <pointsMaterial
+          color="#ffffff"
+          size={0.022}
+          transparent
+          opacity={0}
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
+      </points>
       <mesh ref={lattice} scale={1.02}>
         <sphereGeometry args={[1.28, 28, 14]} />
         <meshBasicMaterial
@@ -254,7 +336,6 @@ function PulseRing({
   color,
   introDelay,
   reduceMotion = false,
-  activated = false,
 }: {
   radius: number;
   tube: number;
@@ -266,32 +347,24 @@ function PulseRing({
   color: string;
   introDelay: number;
   reduceMotion?: boolean;
-  activated?: boolean;
 }) {
   const ring = useRef<THREE.Mesh>(null);
-  const activationLevel = useRef(0);
 
-  useFrame(({ clock }, delta) => {
+  useFrame(({ clock }) => {
     if (!ring.current) return;
 
     const material = ring.current.material as THREE.MeshBasicMaterial;
-    const activationTarget = activated ? 1 : 0;
-    activationLevel.current = reduceMotion
-      ? activationTarget * 0.45
-      : THREE.MathUtils.damp(activationLevel.current, activationTarget, activated ? 10 : 3.4, delta);
-    const activation = activationLevel.current;
-
     if (reduceMotion) {
-      ring.current.scale.setScalar(1 + activation * 0.08);
-      material.opacity = opacity + activation * 0.075;
+      ring.current.scale.setScalar(1);
+      material.opacity = opacity;
       return;
     }
 
     const introProgress = smoothStep((clock.elapsedTime - introDelay) / 0.9);
     const wave = (Math.sin(clock.elapsedTime * speed + phase) + 1) / 2;
     const organicFlicker = Math.sin(clock.elapsedTime * (speed * 0.47) + phase * 1.7) * 0.012;
-    ring.current.scale.setScalar((0.88 + introProgress * 0.06) + wave * 0.16 * introProgress + activation * 0.095);
-    material.opacity = (opacity + wave * 0.055 + organicFlicker + activation * 0.085) * introProgress;
+    ring.current.scale.setScalar((0.88 + introProgress * 0.06) + wave * 0.16 * introProgress);
+    material.opacity = (opacity + wave * 0.055 + organicFlicker) * introProgress;
   });
 
   return (
@@ -308,7 +381,7 @@ function PulseRing({
   );
 }
 
-function OrbitRings({ reduceMotion = false, activated = false }: { reduceMotion?: boolean; activated?: boolean }) {
+function OrbitRings({ reduceMotion = false }: { reduceMotion?: boolean }) {
   const rings = useRef<THREE.Group>(null);
 
   useFrame((_, delta) => {
@@ -330,7 +403,6 @@ function OrbitRings({ reduceMotion = false, activated = false }: { reduceMotion?
         color="#ffffff"
         introDelay={2.45}
         reduceMotion={reduceMotion}
-        activated={activated}
       />
       <PulseRing
         radius={1.76}
@@ -343,7 +415,6 @@ function OrbitRings({ reduceMotion = false, activated = false }: { reduceMotion?
         color="#e5e7eb"
         introDelay={2.8}
         reduceMotion={reduceMotion}
-        activated={activated}
       />
       <PulseRing
         radius={2.36}
@@ -356,7 +427,6 @@ function OrbitRings({ reduceMotion = false, activated = false }: { reduceMotion?
         color="#f8fafc"
         introDelay={3.15}
         reduceMotion={reduceMotion}
-        activated={activated}
       />
     </group>
   );
@@ -458,11 +528,10 @@ function MaskHighlights({ reduceMotion = false }: { reduceMotion?: boolean }) {
   );
 }
 
-function FacetedMask({ reduceMotion = false, activated = false }: { reduceMotion?: boolean; activated?: boolean }) {
+function FacetedMask({ reduceMotion = false }: { reduceMotion?: boolean }) {
   const maskGroup = useRef<THREE.Group>(null);
   const backplateMaterial = useRef<THREE.MeshStandardMaterial>(null);
   const panelMaterials = useRef<Array<THREE.MeshStandardMaterial | null>>([]);
-  const activationLevel = useRef(0);
   const panelRevealDelays = useMemo(() => [0.64, 0.64, 0.76, 0.76, 0, 0, 0.22, 0.22, 0.1, 0.1, 0.42, 0.42], []);
   const planes = useMemo<PlaneSpec[]>(
     () => [
@@ -644,16 +713,12 @@ function FacetedMask({ reduceMotion = false, activated = false }: { reduceMotion
     });
   }, []);
 
-  useFrame(({ clock }, delta) => {
+  useFrame(({ clock }) => {
     const formationProgress = reduceMotion ? 1 : smoothStep((clock.elapsedTime - 0.9) / 1.7);
     const surge = reduceMotion ? 0 : Math.sin(clamp01((clock.elapsedTime - 2.65) / 0.95) * Math.PI);
-    activationLevel.current = reduceMotion
-      ? (activated ? 0.35 : 0)
-      : THREE.MathUtils.damp(activationLevel.current, activated ? 1 : 0, activated ? 8 : 3.5, delta);
-    const activation = activationLevel.current;
 
     if (maskGroup.current) {
-      const revealScale = 0.82 + formationProgress * 0.18 + surge * 0.018 + activation * 0.018;
+      const revealScale = 0.82 + formationProgress * 0.18 + surge * 0.018;
       maskGroup.current.scale.set(0.9 * revealScale, 0.88 * revealScale, 0.9 * revealScale);
       maskGroup.current.position.z = -0.08 + formationProgress * 0.08;
     }
@@ -670,8 +735,7 @@ function FacetedMask({ reduceMotion = false, activated = false }: { reduceMotion
       material.opacity = MASK_SURFACE_OPACITY * panelProgress;
       material.emissiveIntensity =
         (index === 4 ? 0.045 : 0.012) +
-        surge * (index === 4 || index === 5 ? 0.08 : 0.025) +
-        activation * (index === 4 || index === 5 ? 0.13 : 0.04);
+        surge * (index === 4 || index === 5 ? 0.08 : 0.025);
     });
   });
 
@@ -716,16 +780,12 @@ function FacetedMask({ reduceMotion = false, activated = false }: { reduceMotion
 function ConsciousnessScene({ entering = false, reduceMotion = false, activated = false }: DigitalCore3DProps) {
   const scene = useRef<THREE.Group>(null);
   const mask = useRef<THREE.Group>(null);
-  const activationLevel = useRef(0);
 
   useFrame(({ pointer, clock }, delta) => {
     if (!scene.current || !mask.current) return;
 
     const introProgress = reduceMotion ? 1 : easeOutCubic(clock.elapsedTime / INTRO_DURATION);
-    activationLevel.current = reduceMotion
-      ? (activated ? 0.24 : 0)
-      : THREE.MathUtils.damp(activationLevel.current, activated ? 1 : 0, activated ? 8 : 3.3, delta);
-    scene.current.scale.setScalar((entering ? 1.08 : 1) * (0.92 + introProgress * 0.08 + activationLevel.current * 0.025));
+    scene.current.scale.setScalar((entering ? 1.08 : 1) * (0.92 + introProgress * 0.08));
 
     const targetY = reduceMotion ? 0 : pointer.x * 0.09;
     const targetX = reduceMotion ? 0 : -pointer.y * 0.055;
@@ -741,9 +801,9 @@ function ConsciousnessScene({ entering = false, reduceMotion = false, activated 
   return (
     <group ref={scene} scale={(entering ? 1.08 : 1) * (reduceMotion ? 1 : 0.92)}>
       <ConsciousnessField entering={entering} reduceMotion={reduceMotion} activated={activated} />
-      <OrbitRings reduceMotion={reduceMotion} activated={activated} />
+      <OrbitRings reduceMotion={reduceMotion} />
       <group ref={mask}>
-        <FacetedMask reduceMotion={reduceMotion} activated={activated} />
+        <FacetedMask reduceMotion={reduceMotion} />
       </group>
     </group>
   );

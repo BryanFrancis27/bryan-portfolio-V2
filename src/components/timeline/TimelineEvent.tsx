@@ -4,7 +4,7 @@ import type { TimelineEvent as TimelineEventType } from "@/types/dashboard";
 
 export function TimelineEvent({ event }: { event: TimelineEventType }) {
   return (
-    <article className="relative pl-8">
+    <article className="relative min-w-0 pl-8">
       <span className="absolute left-0 top-2 h-3 w-3 border border-white/45 bg-background shadow-metal-glow" />
       <Card>
         <CardContent className="space-y-4 pt-5">
@@ -14,7 +14,7 @@ export function TimelineEvent({ event }: { event: TimelineEventType }) {
             </Badge>
             <p className="font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">{event.label}</p>
           </div>
-          <div>
+          <div className="min-w-0">
             <h2 className="text-xl font-semibold text-white">{event.title}</h2>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">{event.description}</p>
           </div>

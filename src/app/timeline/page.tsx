@@ -5,8 +5,8 @@ import { timelineEvents } from "@/data/timeline";
 export default function TimelinePage() {
   return (
     <DashboardShell>
-      <div className="space-y-8">
-        <section className="max-w-3xl">
+      <div className="w-full min-w-0 space-y-8">
+        <section className="max-w-5xl">
           <p className="font-mono text-sm uppercase tracking-[0.2em] text-zinc-400">
             Foundation Timeline
           </p>
@@ -15,7 +15,7 @@ export default function TimelinePage() {
             Education, applied training, and technical milestones that formed Bryan&apos;s full-stack product direction.
           </p>
         </section>
-        <section className="relative space-y-6 before:absolute before:left-1.5 before:top-2 before:h-full before:w-px before:bg-gradient-to-b before:from-white/30 before:via-white/10 before:to-transparent">
+        <section className="relative max-w-6xl space-y-6 before:absolute before:left-1.5 before:top-2 before:h-full before:w-px before:bg-gradient-to-b before:from-white/30 before:via-white/10 before:to-transparent">
           {timelineEvents.map((event) => (
             <TimelineEvent key={`${event.period}-${event.title}`} event={event} />
           ))}

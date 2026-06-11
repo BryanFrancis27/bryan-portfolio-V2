@@ -27,7 +27,7 @@ export function DigitalConsciousnessCore({ entering = false }: { entering?: bool
 
   return (
     <motion.div
-      className="relative mx-auto flex h-[23rem] w-[23rem] items-center justify-center [perspective:900px] sm:h-[31rem] sm:w-[31rem]"
+      className="relative mx-auto flex h-[min(23rem,82vw)] w-full max-w-[23rem] items-center justify-center [perspective:900px] sm:h-[31rem] sm:max-w-[31rem]"
       animate={entering ? { scale: 1.08, opacity: 1 } : { scale: 1, opacity: 1 }}
       transition={{ duration: 0.8, ease: "easeInOut" }}
       aria-label="Digital Consciousness Core animation"

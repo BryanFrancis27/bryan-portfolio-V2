@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 export function LoadingPanel({ label = "Loading Route" }: { label?: string }) {
   return (
     <DashboardShell>
-      <section className="grid gap-6 lg:grid-cols-[1fr_0.55fr]">
+      <section className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.55fr)]">
         <Card className="scan-line">
           <CardHeader className="border-b border-white/[0.06]">
             <div className="h-3 w-36 rounded bg-white/10" />
@@ -13,7 +13,7 @@ export function LoadingPanel({ label = "Loading Route" }: { label?: string }) {
           <CardContent className="space-y-4 pt-5">
             <div className="h-4 w-full rounded bg-white/10" />
             <div className="h-4 w-3/4 rounded bg-white/10" />
-            <div className="grid gap-3 pt-4 sm:grid-cols-3">
+            <div className="grid min-w-0 gap-3 pt-4 sm:grid-cols-3">
               <div className="h-20 border border-white/[0.08] bg-white/[0.018]" />
               <div className="h-20 border border-white/[0.08] bg-white/[0.018]" />
               <div className="h-20 border border-white/[0.08] bg-white/[0.018]" />
