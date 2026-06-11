@@ -28,11 +28,15 @@
   }
 
   html {
+    min-height: 100%;
+    overflow-x: hidden;
     scroll-behavior: smooth;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
+    min-height: 100dvh;
+    overflow-x: hidden;
     background:
       radial-gradient(circle at 22% 8%, rgb(255 255 255 / 0.055), transparent 30rem),
       radial-gradient(circle at 78% 18%, rgb(209 213 219 / 0.045), transparent 28rem),

@@ -1,6 +1,9 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
+import bryanOsLogo from "@/assets/Portfolio-v2-logo.png";
 import { BootSequence } from "@/components/simulation/BootSequence";
 import { DigitalConsciousnessCore } from "@/components/landing/DigitalConsciousnessCore";
 import { SimulationEntryButton } from "@/components/simulation/SimulationEntryButton";
@@ -13,7 +16,7 @@ export function SimulationLanding() {
   const handleBootComplete = useCallback(() => setIsReady(true), []);
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden bg-background px-4 py-5 text-foreground sm:px-6 lg:px-8">
+    <main className="relative flex min-h-dvh flex-col overflow-x-hidden bg-background px-4 py-5 text-foreground sm:px-6 lg:px-8">
       <SystemBackground />
       <motion.div
         className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.026] to-transparent"
@@ -24,16 +27,27 @@ export function SimulationLanding() {
       <div className="pointer-events-none absolute inset-x-10 top-24 h-px glyph-line opacity-30" aria-hidden="true" />
       <div className="pointer-events-none absolute inset-x-20 bottom-16 h-px glyph-line opacity-20" aria-hidden="true" />
 
-      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-2.5rem)] w-full max-w-[112rem] flex-col">
+      <div className="relative z-10 mx-auto flex w-full max-w-[112rem] flex-1 flex-col">
         <header className="flex items-center justify-between gap-4 border-b border-white/[0.08] py-4">
-          <div>
-            <p className="font-mono text-xl tracking-[0.2em] text-white">
-              BOS
-            </p>
-            {/* <p className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
-              Artificial Intelligence Operating System
-            </p> */}
-          </div>
+          <Link
+            href="/"
+            className="group flex min-w-0 items-center gap-3"
+            aria-label="BryanOS home"
+          >
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-md border border-white/16 bg-white/[0.035] shadow-metal-glow transition duration-300 group-hover:border-white/30">
+              <Image
+                src={bryanOsLogo}
+                alt=""
+                className="h-full w-full object-cover"
+                sizes="40px"
+                priority
+                aria-hidden="true"
+              />
+            </span>
+            <span className="min-w-0 font-mono text-xl tracking-[0.2em] text-white transition duration-300 group-hover:text-zinc-200">
+              BryanOS
+            </span>
+          </Link>
           <span className="border-l border-white/18 pl-3 font-mono text-xs uppercase tracking-[0.16em] text-white">
             {isReady ? "Active" : "Waking"}
           </span>
