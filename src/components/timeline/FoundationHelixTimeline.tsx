@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { useMemo, useRef, useState } from "react";
 import {
   motion,
@@ -13,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   createHelixAnchors,
+  createHelixPathThroughAnchors,
   createHelixPath,
   createHelixRungs,
 } from "@/lib/helix-path";
@@ -20,8 +22,9 @@ import { cn } from "@/lib/utils";
 import type { TimelineEvent } from "@/types/dashboard";
 
 const HELIX_WIDTH = 320;
-const ROW_HEIGHT = 820;
+const ROW_HEIGHT = 480;
 const HELIX_SAMPLES = 112;
+const HELIX_VERTICAL_PADDING = 80;
 
 export function FoundationHelixTimeline({ events }: { events: TimelineEvent[] }) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -31,7 +34,7 @@ export function FoundationHelixTimeline({ events }: { events: TimelineEvent[] })
     target: sectionRef,
     offset: ["start 62%", "end 38%"],
   });
-  const activePathLength = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const activePathLength = useTransform(scrollYProgress, [0, 0.88], [0, 1]);
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     const clamped = Math.min(Math.max(latest, 0), 1);
@@ -41,26 +44,36 @@ export function FoundationHelixTimeline({ events }: { events: TimelineEvent[] })
   });
 
   const geometry = useMemo(() => {
-    const height = events.length * ROW_HEIGHT;
-    const cycles = Math.max(events.length - 1, 1) * 0.82;
+    const rowHeight = ROW_HEIGHT;
+    const height = events.length * rowHeight;
+    const cycles = Math.max(events.length / 2, 1);
+    const samples = Math.max(events.length * 32 + 1, HELIX_SAMPLES);
     const base = {
       width: HELIX_WIDTH,
       height,
       amplitude: 72,
       cycles,
-      samples: HELIX_SAMPLES,
-      phase: -Math.PI / 2,
+      samples,
+      phase: -Math.PI,
     };
+
+    const anchors = createHelixAnchors(
+      events.map((event) => event.id),
+      base,
+    );
 
     return {
       height,
-      primary: createHelixPath(base),
+      totalHeight: height + HELIX_VERTICAL_PADDING * 2,
+      primaryPath: createHelixPathThroughAnchors({
+        anchors,
+        width: HELIX_WIDTH,
+        topPadding: HELIX_VERTICAL_PADDING,
+        bottomPadding: 0,
+      }),
       secondary: createHelixPath({ ...base, phase: base.phase + Math.PI }),
       rungs: createHelixRungs(base, events.length * 5),
-      anchors: createHelixAnchors(
-        events.map((event) => event.id),
-        base,
-      ),
+      anchors,
     };
   }, [events]);
 
@@ -69,7 +82,7 @@ export function FoundationHelixTimeline({ events }: { events: TimelineEvent[] })
   return (
     <section
       ref={sectionRef}
-      className="relative isolate w-full overflow-visible py-4 md:py-8"
+      className="relative isolate w-full overflow-visible pb-32 pt-4 md:pb-40 md:pt-8"
       aria-label="Foundation timeline formation sequence"
     >
       <div
@@ -85,13 +98,17 @@ export function FoundationHelixTimeline({ events }: { events: TimelineEvent[] })
           anchors={geometry.anchors}
           activeIndex={activeIndex}
           height={geometry.height}
-          primaryPath={geometry.primary.path}
+          primaryPath={geometry.primaryPath}
           progressPathLength={progressPathLength}
           rungs={geometry.rungs}
           secondaryPath={geometry.secondary.path}
+          totalHeight={geometry.totalHeight}
         />
 
-        <ol className="relative z-10 space-y-0">
+        <ol
+          className="relative z-10 space-y-0"
+          style={{ "--timeline-row-height": `${ROW_HEIGHT}px` } as CSSProperties}
+        >
           {events.map((event, index) => (
             <TimelineMilestone
               event={event}
@@ -116,6 +133,7 @@ function HelixSvg({
   progressPathLength,
   rungs,
   secondaryPath,
+  totalHeight,
 }: {
   anchors: ReturnType<typeof createHelixAnchors>;
   activeIndex: number;
@@ -124,13 +142,18 @@ function HelixSvg({
   progressPathLength: number | MotionValue<number>;
   rungs: ReturnType<typeof createHelixRungs>;
   secondaryPath: string;
+  totalHeight: number;
 }) {
   return (
     <svg
       aria-hidden="true"
-      className="pointer-events-none absolute left-1 top-0 h-full w-16 overflow-visible md:left-1/2 md:w-72 md:-translate-x-1/2 lg:w-80 xl:w-96"
+      className="pointer-events-none absolute left-1 top-0 w-16 overflow-visible md:left-1/2 md:w-72 md:-translate-x-1/2 lg:w-80 xl:w-96"
       preserveAspectRatio="none"
-      viewBox={`0 0 ${HELIX_WIDTH} ${height}`}
+      style={{
+        height: totalHeight,
+        top: -HELIX_VERTICAL_PADDING,
+      }}
+      viewBox={`0 ${-HELIX_VERTICAL_PADDING} ${HELIX_WIDTH} ${totalHeight}`}
     >
       <defs>
         <linearGradient id="helix-active" x1="0" x2="0" y1="0" y2="1">
@@ -138,6 +161,19 @@ function HelixSvg({
           <stop offset="52%" stopColor="rgb(255 255 255)" stopOpacity="0.82" />
           <stop offset="100%" stopColor="rgb(161 161 170)" stopOpacity="0.45" />
         </linearGradient>
+        <filter id="helix-active-glow" x="-40%" y="-10%" width="180%" height="120%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+          <feColorMatrix
+            in="blur"
+            type="matrix"
+            values="1 0 0 0 0.94 0 1 0 0 0.94 0 0 1 0 0.96 0 0 0 0.45 0"
+            result="glow"
+          />
+          <feMerge>
+            <feMergeNode in="glow" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
       </defs>
 
       {rungs.map((rung, index) => (
@@ -167,9 +203,9 @@ function HelixSvg({
       <path
         d={primaryPath}
         fill="none"
-        className="stroke-white/24"
+        className="stroke-white/55"
         strokeLinecap="round"
-        strokeWidth="2.5"
+        strokeWidth="3"
         vectorEffect="non-scaling-stroke"
       />
       <motion.path
@@ -178,6 +214,7 @@ function HelixSvg({
         stroke="url(#helix-active)"
         strokeLinecap="round"
         strokeWidth="4"
+        filter="url(#helix-active-glow)"
         style={{ pathLength: progressPathLength }}
         vectorEffect="non-scaling-stroke"
       />
@@ -236,7 +273,7 @@ function TimelineMilestone({
 
   return (
     <li
-      className="relative grid min-h-[34rem] grid-cols-[3.25rem_minmax(0,1fr)] items-center md:min-h-[86vh] md:grid-cols-[minmax(0,1fr)_minmax(10rem,18rem)_minmax(0,1fr)] lg:min-h-[94vh] xl:min-h-[102vh] xl:grid-cols-[minmax(0,1fr)_minmax(12rem,22rem)_minmax(0,1fr)]"
+      className="relative grid min-h-[var(--timeline-row-height)] grid-cols-[3.25rem_minmax(0,1fr)] items-center md:grid-cols-[minmax(0,1fr)_minmax(8rem,16rem)_minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_minmax(10rem,18rem)_minmax(0,1fr)] xl:grid-cols-[minmax(0,1fr)_minmax(12rem,20rem)_minmax(0,1fr)]"
       aria-current={isActive ? "step" : undefined}
     >
       <span
@@ -268,21 +305,20 @@ function TimelineMilestone({
             isComplete && !isActive && "border-white/[0.12]",
           )}
         >
-          <CardContent className="space-y-4 p-5 sm:p-6">
+          <CardContent className="space-y-3 p-4 sm:p-5">
             <div className="flex flex-wrap items-center gap-2.5">
               <Badge variant="default" className="font-mono tracking-[0.14em]">
                 {event.period}
               </Badge>
-              <Badge variant="secondary" className="font-mono tracking-[0.14em]">
-                {event.sequence}
-              </Badge>
+              <p className="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-zinc-500">
+                {event.label}
+              </p>
             </div>
 
             <div className="space-y-2">
-              <p className="font-mono text-xs uppercase tracking-[0.18em] text-zinc-400">
-                {event.category} / {event.status}
-              </p>
-              <h2 className="text-xl font-semibold leading-tight text-white">{event.title}</h2>
+              <h2 className="text-lg font-semibold leading-tight text-white sm:text-xl">
+                {event.title}
+              </h2>
               <p className="text-sm leading-6 text-muted-foreground">{event.description}</p>
             </div>
 
@@ -304,10 +340,7 @@ function TimelineMilestone({
               ))}
             </div>
 
-            <div className="flex items-center gap-3 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-zinc-500">
-              <span className={cn("h-px w-8 bg-white/18", isActive && "bg-white/70")} />
-              <span>{event.label}</span>
-            </div>
+            <span className={cn("block h-px w-8 bg-white/18", isActive && "bg-white/70")} />
           </CardContent>
         </Card>
       </motion.article>

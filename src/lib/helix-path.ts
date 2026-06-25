@@ -27,11 +27,25 @@ export interface HelixAnchor {
   side: "left" | "right";
 }
 
+export interface HelixAnchorPathOptions {
+  anchors: HelixAnchor[];
+  width: number;
+  topPadding: number;
+  bottomPadding: number;
+}
+
 function getHelixPoint(
   index: number,
   options: Required<HelixPathOptions>,
 ): HelixPoint {
   const progress = index / Math.max(options.samples - 1, 1);
+  return getHelixPointAtProgress(progress, options);
+}
+
+function getHelixPointAtProgress(
+  progress: number,
+  options: Required<HelixPathOptions>,
+): HelixPoint {
   const angle = progress * options.cycles * Math.PI * 2 + options.phase;
   const centerX = options.width / 2;
 
@@ -93,9 +107,18 @@ export function createHelixAnchors(
   };
 
   return ids.map((id, index) => {
-    const sampleIndex = Math.round(((index + 0.5) / ids.length) * (options.samples - 1));
+    const progress = (index + 0.5) / ids.length;
     const side = index % 2 === 0 ? "left" : "right";
-    const point = getHelixPoint(sampleIndex, side === "left" ? baseOptions : oppositeOptions);
+    const basePoint = getHelixPointAtProgress(progress, baseOptions);
+    const oppositePoint = getHelixPointAtProgress(progress, oppositeOptions);
+    const point =
+      side === "left"
+        ? basePoint.x < oppositePoint.x
+          ? basePoint
+          : oppositePoint
+        : basePoint.x > oppositePoint.x
+          ? basePoint
+          : oppositePoint;
 
     return {
       id,
@@ -105,4 +128,53 @@ export function createHelixAnchors(
       side,
     };
   });
+}
+
+export function createHelixPathThroughAnchors({
+  anchors,
+  width,
+  topPadding,
+  bottomPadding,
+}: HelixAnchorPathOptions): string {
+  if (anchors.length === 0) {
+    return "";
+  }
+
+  const centerX = width / 2;
+  const start = {
+    x: centerX,
+    y: anchors[0].y - topPadding,
+  };
+  const points =
+    bottomPadding > 0
+      ? [
+          start,
+          ...anchors,
+          {
+            x: centerX,
+            y: anchors[anchors.length - 1].y + bottomPadding,
+          },
+        ]
+      : [start, ...anchors];
+
+  return points
+    .map((point, index) => {
+      if (index === 0) {
+        return `M ${point.x.toFixed(2)} ${point.y.toFixed(2)}`;
+      }
+
+      const previous = points[index - 1];
+      const controlY = previous.y + (point.y - previous.y) / 2;
+
+      return [
+        "C",
+        previous.x.toFixed(2),
+        controlY.toFixed(2),
+        point.x.toFixed(2),
+        controlY.toFixed(2),
+        point.x.toFixed(2),
+        point.y.toFixed(2),
+      ].join(" ");
+    })
+    .join(" ");
 }
