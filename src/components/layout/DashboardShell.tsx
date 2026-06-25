@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import bryanOsLogo from "@/assets/Portfolio-v2-logo.png";
-import { DashboardNav } from "@/components/layout/DashboardNav";
+import { FloatingNavigation } from "@/components/layout/FloatingNavigation";
 import { SystemBackground } from "@/components/shared/SystemBackground";
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
@@ -9,18 +9,18 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     <div className="relative min-h-screen overflow-x-hidden">
       <SystemBackground />
       <header className="sticky top-0 z-30 border-b border-white/[0.07] bg-background/82 backdrop-blur-xl">
-        <div className="mx-auto flex w-full max-w-[112rem] flex-col gap-4 px-4 py-3 sm:px-6 lg:flex-row lg:items-center lg:justify-between xl:px-10 2xl:px-12">
+        <div className="mx-auto flex w-full max-w-[112rem] flex-col gap-4 px-4 py-3 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:pl-28 xl:pr-10 2xl:pr-12">
           <Link
             href="/"
             className="group flex min-w-0 items-center gap-3"
             aria-label="BryanOS home"
           >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-md border border-white/16 bg-white/[0.035] shadow-metal-glow transition duration-300 group-hover:border-white/30">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-md bg-white/[0.035] shadow-metal-glow transition duration-300">
               <Image
                 src={bryanOsLogo}
                 alt=""
                 className="h-full w-full object-cover"
-                sizes="40px"
+                sizes="48px"
                 aria-hidden="true"
               />
             </span>
@@ -36,11 +36,11 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               <span className="h-2 w-2 rounded-full bg-white" aria-hidden="true" />
               BryanOS Active
             </div>
-            <DashboardNav />
           </div>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-[112rem] min-w-0 px-4 py-6 sm:px-6 sm:py-8 xl:px-10 2xl:px-12">
+      <FloatingNavigation />
+      <main className="mx-auto w-full max-w-[112rem] min-w-0 px-4 pb-24 pt-6 sm:px-6 sm:py-8 lg:pl-28 xl:pr-10 2xl:pr-12">
         {children}
       </main>
     </div>

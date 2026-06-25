@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, Mail, RadioTower, ShieldCheck } from "lucide-react";
+import { RadioTower, ShieldCheck } from "lucide-react";
 import { ActivityChart } from "@/components/dashboard/ActivityChart";
 import { CommandCenterCard } from "@/components/dashboard/CommandCenterCard";
+import { HeroCtaButtons } from "@/components/dashboard/HeroCtaButtons";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { MotionSection } from "@/components/dashboard/MotionSection";
 import { SystemStatusBadge } from "@/components/dashboard/SystemStatusBadge";
-import { buttonVariants } from "@/components/ui/button";
 import { activityPoints, currentFocus, metrics, recentActivity } from "@/data/metrics";
 import { systems } from "@/data/systems";
 import { cn } from "@/lib/utils";
@@ -40,16 +40,7 @@ export function CommandCenterView() {
           <p className="mt-4 max-w-2xl text-lg leading-8 text-muted-foreground">
             Software Engineer
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/systems" className={buttonVariants({ size: "lg" })}>
-              Inspect Systems
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-            <Link href="/contact" className={buttonVariants({ variant: "outline", size: "lg" })}>
-              Open Contact Channel
-              <Mail className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </div>
+          <HeroCtaButtons />
         </section>
 
         <aside className="alien-panel min-w-0 rounded-lg border border-white/[0.08] p-6 backdrop-blur">

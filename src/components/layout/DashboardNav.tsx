@@ -2,16 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Contact, Gauge, History, Layers3, UserRoundCog } from "lucide-react";
+import { navigationItems } from "@/data/navigation";
 import { cn } from "@/lib/utils";
-
-const navItems = [
-  { label: "Command Center", href: "/command-center", icon: Gauge },
-  { label: "System Registry", href: "/systems", icon: Layers3 },
-  { label: "Foundation Timeline", href: "/timeline", icon: History },
-  { label: "Experience Matrix", href: "/experience", icon: UserRoundCog },
-  { label: "Contact Channel", href: "/contact", icon: Contact },
-];
 
 export function DashboardNav() {
   const pathname = usePathname();
@@ -21,7 +13,7 @@ export function DashboardNav() {
       className="-mx-1 flex min-w-0 gap-1.5 overflow-x-auto px-1 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0"
       aria-label="Primary navigation"
     >
-      {navItems.map((item) => {
+      {navigationItems.map((item) => {
         const Icon = item.icon;
         const isActive = pathname === item.href;
 
