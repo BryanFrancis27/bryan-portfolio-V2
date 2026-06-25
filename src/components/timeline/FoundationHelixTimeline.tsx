@@ -20,32 +20,33 @@ import { cn } from "@/lib/utils";
 import type { TimelineEvent } from "@/types/dashboard";
 
 const HELIX_WIDTH = 320;
-const ROW_HEIGHT = 330;
-const HELIX_SAMPLES = 96;
+const ROW_HEIGHT = 820;
+const HELIX_SAMPLES = 112;
 
 export function FoundationHelixTimeline({ events }: { events: TimelineEvent[] }) {
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start 65%", "end 35%"],
+    offset: ["start 62%", "end 38%"],
   });
-  const activePathLength = useTransform(scrollYProgress, [0, 1], [0.08, 1]);
+  const activePathLength = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     const clamped = Math.min(Math.max(latest, 0), 1);
-    const nextIndex = Math.round(clamped * Math.max(events.length - 1, 0));
+    const nextIndex =
+      clamped < 0.04 ? -1 : Math.min(events.length - 1, Math.floor(clamped * events.length));
     setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
   });
 
   const geometry = useMemo(() => {
     const height = events.length * ROW_HEIGHT;
-    const cycles = Math.max(events.length - 1, 1) * 0.72;
+    const cycles = Math.max(events.length - 1, 1) * 0.82;
     const base = {
       width: HELIX_WIDTH,
       height,
-      amplitude: 58,
+      amplitude: 72,
       cycles,
       samples: HELIX_SAMPLES,
       phase: -Math.PI / 2,
@@ -68,16 +69,15 @@ export function FoundationHelixTimeline({ events }: { events: TimelineEvent[] })
   return (
     <section
       ref={sectionRef}
-      className="relative isolate max-w-7xl overflow-hidden rounded-lg border border-white/[0.06] bg-white/[0.012] px-3 py-8 shadow-dashboard-card sm:px-5 md:px-6 lg:px-8"
+      className="relative isolate w-full overflow-visible py-4 md:py-8"
       aria-label="Foundation timeline formation sequence"
     >
       <div
-        className="pointer-events-none absolute inset-0 -z-10 opacity-80"
+        className="pointer-events-none absolute inset-0 -z-10 opacity-60"
         aria-hidden="true"
       >
-        <div className="absolute inset-0 dashboard-grid opacity-45" />
-        <div className="absolute inset-y-0 left-6 w-px bg-gradient-to-b from-transparent via-white/15 to-transparent md:left-1/2" />
-        <div className="absolute left-0 right-0 top-8 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        <div className="absolute inset-y-0 left-7 w-px bg-gradient-to-b from-transparent via-white/12 to-transparent md:left-1/2" />
+        <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       </div>
 
       <div className="relative">
@@ -91,7 +91,7 @@ export function FoundationHelixTimeline({ events }: { events: TimelineEvent[] })
           secondaryPath={geometry.secondary.path}
         />
 
-        <ol className="relative z-10 space-y-8 md:space-y-0">
+        <ol className="relative z-10 space-y-0">
           {events.map((event, index) => (
             <TimelineMilestone
               event={event}
@@ -128,15 +128,15 @@ function HelixSvg({
   return (
     <svg
       aria-hidden="true"
-      className="pointer-events-none absolute left-1 top-0 h-full w-16 overflow-visible md:left-1/2 md:w-56 md:-translate-x-1/2 lg:w-64"
+      className="pointer-events-none absolute left-1 top-0 h-full w-16 overflow-visible md:left-1/2 md:w-72 md:-translate-x-1/2 lg:w-80 xl:w-96"
       preserveAspectRatio="none"
       viewBox={`0 0 ${HELIX_WIDTH} ${height}`}
     >
       <defs>
         <linearGradient id="helix-active" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="rgb(255 255 255)" stopOpacity="0.35" />
-          <stop offset="52%" stopColor="rgb(167 139 250)" stopOpacity="0.88" />
-          <stop offset="100%" stopColor="rgb(96 165 250)" stopOpacity="0.58" />
+          <stop offset="0%" stopColor="rgb(244 244 245)" stopOpacity="0.28" />
+          <stop offset="52%" stopColor="rgb(255 255 255)" stopOpacity="0.82" />
+          <stop offset="100%" stopColor="rgb(161 161 170)" stopOpacity="0.45" />
         </linearGradient>
       </defs>
 
@@ -193,7 +193,7 @@ function HelixSvg({
               className={cn(
                 "fill-background stroke-white/18 transition-colors duration-300",
                 isComplete && "stroke-white/32",
-                isActive && "fill-white/10 stroke-violet-200/80",
+                isActive && "fill-white/10 stroke-white/80",
               )}
               strokeWidth="1.5"
               vectorEffect="non-scaling-stroke"
@@ -208,7 +208,7 @@ function HelixSvg({
             />
             <path
               d="M -10 0 H 10 M 0 -10 V 10"
-              className={cn("stroke-white/18", isActive && "stroke-violet-100/70")}
+              className={cn("stroke-white/18", isActive && "stroke-white/70")}
               strokeWidth="1"
               vectorEffect="non-scaling-stroke"
             />
@@ -236,18 +236,18 @@ function TimelineMilestone({
 
   return (
     <li
-      className="relative grid min-h-[21rem] grid-cols-[3.25rem_minmax(0,1fr)] items-center md:grid-cols-[minmax(0,1fr)_minmax(8rem,15rem)_minmax(0,1fr)]"
+      className="relative grid min-h-[34rem] grid-cols-[3.25rem_minmax(0,1fr)] items-center md:min-h-[86vh] md:grid-cols-[minmax(0,1fr)_minmax(10rem,18rem)_minmax(0,1fr)] lg:min-h-[94vh] xl:min-h-[102vh] xl:grid-cols-[minmax(0,1fr)_minmax(12rem,22rem)_minmax(0,1fr)]"
       aria-current={isActive ? "step" : undefined}
     >
       <span
         aria-hidden="true"
         className={cn(
-          "absolute left-7 top-1/2 h-px w-7 origin-left bg-gradient-to-r from-white/35 to-transparent transition duration-500 md:left-auto md:w-[calc(50%-7rem)]",
-          isActive && "from-violet-200/90 shadow-metal-glow",
+          "absolute left-7 top-1/2 h-px w-7 origin-left bg-gradient-to-r from-white/35 to-transparent transition duration-500 md:left-auto md:w-[calc(50%-8rem)] xl:w-[calc(50%-10rem)]",
+          isActive && "from-white/85 shadow-metal-glow",
           isComplete && "from-white/55",
           isLeft
-            ? "md:right-1/2 md:mr-12 md:origin-right md:bg-gradient-to-l"
-            : "md:left-1/2 md:ml-12 md:origin-left md:bg-gradient-to-r",
+            ? "md:right-1/2 md:mr-14 md:origin-right md:bg-gradient-to-l xl:mr-20"
+            : "md:left-1/2 md:ml-14 md:origin-left md:bg-gradient-to-r xl:ml-20",
         )}
       />
 
@@ -264,7 +264,7 @@ function TimelineMilestone({
         <Card
           className={cn(
             "transition duration-500 focus-within:border-white/28 hover:border-white/20",
-            isActive && "border-violet-200/35 bg-white/[0.045] shadow-metal-glow",
+            isActive && "border-white/35 bg-white/[0.045] shadow-metal-glow",
             isComplete && !isActive && "border-white/[0.12]",
           )}
         >
@@ -305,7 +305,7 @@ function TimelineMilestone({
             </div>
 
             <div className="flex items-center gap-3 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-zinc-500">
-              <span className={cn("h-px w-8 bg-white/18", isActive && "bg-violet-200/70")} />
+              <span className={cn("h-px w-8 bg-white/18", isActive && "bg-white/70")} />
               <span>{event.label}</span>
             </div>
           </CardContent>
