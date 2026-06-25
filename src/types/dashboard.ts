@@ -33,11 +33,15 @@ export interface SkillGroup {
 }
 
 export interface TimelineEvent {
+  id: string;
   period: string;
+  category: string;
   title: string;
   label: string;
   description: string;
   signals: string[];
+  status: string;
+  sequence: string;
 }
 
 export interface QuickLink {

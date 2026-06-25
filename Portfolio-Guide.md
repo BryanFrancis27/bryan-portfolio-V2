@@ -28,8 +28,8 @@ All design, architecture, and implementation decisions must support this vision.
 
 - Create a generic portfolio template.
 - Use excessive marketing language.
-- Use unnecessary animations.
-- Create flashy effects that reduce usability.
+- Use motion or visual effects without a clear narrative, interaction, or system purpose.
+- Create visual effects that reduce readability, accessibility, performance, or usability.
 - Use progress bars for skills.
 - Use percentage-based skill ratings.
 - Treat projects as simple portfolio cards.
@@ -326,25 +326,47 @@ Tools
 
 ---
 
-# Animation Rules
+# Animation and Visualization Rules
 
-Animations should support usability.
+Motion and visualization are encouraged when they strengthen the Mission Control experience, clarify relationships, communicate system state, or make an important interaction feel more immersive. Creative animation is allowed; it should remain intentional, performant, accessible, and consistent with the page narrative.
 
-Allowed:
+## Encouraged
 
-- Fade In
-- Slide In
-- Dashboard Card Hover
-- Tab Transitions
-- Page Transitions
+- Fade, slide, scale, mask, and path-drawing transitions
+- Scroll-linked storytelling and progressive content reveals
+- Interactive timelines, system maps, data flows, orbit paths, helix structures, and technical diagrams
+- Purposeful parallax and depth effects that establish hierarchy
+- Controlled ambient motion that gives a system or visualization a sense of life
+- Hover, focus, tab, page, loading, and state transitions
+- Canvas, SVG, WebGL, Three.js, and particle effects when they provide meaningful visual value
+- Cinematic entry and exit sequences for major sections
+- Motion that responds directly to scrolling, hovering, clicking, dragging, or application state
 
-Avoid:
+## Creative Freedom with Guardrails
 
-- Continuous floating
-- Random movement
-- Excessive parallax
-- Excessive particle systems
-- Autoplay animations
+- Continuous or autoplay motion is permitted when it is subtle, relevant to the interface, and does not compete with the content.
+- Parallax is permitted when it preserves readability, scrolling control, and mobile performance.
+- Glow, particles, distortion, and other cinematic effects are permitted when used selectively around focal elements.
+- Complex visualizations may use dedicated client components, SVG, Canvas, or Three.js when a simpler implementation would not achieve the intended experience.
+- Prefer progressive enhancement: the content and page structure must remain understandable if advanced motion is unavailable.
+
+## Avoid
+
+- Random motion with no relationship to user input, system state, or page narrative
+- Effects that obscure text, controls, navigation, or important content
+- Scroll hijacking that removes normal user control
+- Motion that causes layout instability or noticeable performance degradation
+- Large effects that run continuously when they are outside the viewport
+- Repeating animation that becomes distracting rather than informative
+- Ignoring `prefers-reduced-motion` or other accessibility requirements
+
+## Implementation Expectations
+
+- Keep animations GPU-friendly where practical by favoring transforms and opacity.
+- Pause, reduce, or remove nonessential motion for `prefers-reduced-motion`.
+- Test complex effects across desktop, tablet, and mobile breakpoints.
+- Lazy-load heavy visual components and avoid adding large dependencies for minor effects.
+- Treat performance and accessibility as design constraints, not reasons to avoid creative visualization.
 
 ---
 

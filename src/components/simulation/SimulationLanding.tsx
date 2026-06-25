@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import bryanOsLogo from "@/assets/Portfolio-v2-logo.png";
 import { BootSequence } from "@/components/simulation/BootSequence";
 import { DigitalConsciousnessCore } from "@/components/landing/DigitalConsciousnessCore";
-import { FloatingNavigation } from "@/components/layout/FloatingNavigation";
 import { SimulationEntryButton } from "@/components/simulation/SimulationEntryButton";
 import { SystemBackground } from "@/components/shared/SystemBackground";
 import { useCallback, useState } from "react";
@@ -19,7 +18,6 @@ export function SimulationLanding() {
   return (
     <main className="relative flex min-h-dvh flex-col overflow-x-hidden bg-background px-4 pb-24 pt-5 text-foreground sm:px-6 lg:px-8 lg:pb-5">
       <SystemBackground />
-      <FloatingNavigation />
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
         <motion.div
           className="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.026] to-transparent"

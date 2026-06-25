@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import bryanOsLogo from "@/assets/Portfolio-v2-logo.png";

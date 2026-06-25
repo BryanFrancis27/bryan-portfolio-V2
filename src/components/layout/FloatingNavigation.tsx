@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
@@ -8,8 +10,17 @@ import { cn } from "@/lib/utils";
 
 export function FloatingNavigation() {
   const pathname = usePathname();
+  const [isMounted, setIsMounted] = useState(false);
 
-  return (
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
+
+  return createPortal(
     <nav
       aria-label="Primary navigation"
       className="fixed inset-x-3 bottom-3 z-40 flex justify-center lg:inset-x-auto lg:bottom-auto lg:left-5 lg:top-1/2 lg:-translate-y-1/2"
@@ -47,6 +58,7 @@ export function FloatingNavigation() {
           );
         })}
       </div>
-    </nav>
+    </nav>,
+    document.body,
   );
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { DashboardRouteFrame } from "@/components/layout/DashboardRouteFrame";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -14,7 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body>{children}</body>
+      <body>
+        <DashboardRouteFrame>{children}</DashboardRouteFrame>
+      </body>
     </html>
   );
 }
