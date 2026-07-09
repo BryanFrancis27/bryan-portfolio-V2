@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 export function MotionSection({
   children,
@@ -9,11 +9,16 @@ export function MotionSection({
   children: React.ReactNode;
   className?: string;
 }) {
+  const reduceMotion = useReducedMotion();
+
   return (
     <motion.section
-      initial={{ opacity: 0, y: 16 }}
+      initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.45, ease: "easeOut" }}
+      transition={{
+        duration: reduceMotion ? 0.08 : 0.32,
+        ease: [0.22, 1, 0.36, 1],
+      }}
       className={className}
     >
       {children}

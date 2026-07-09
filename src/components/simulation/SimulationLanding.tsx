@@ -76,9 +76,11 @@ export function SimulationLanding() {
 
             <div className="flex flex-wrap items-center gap-3">
               <SimulationEntryButton onEnter={() => setEntering(true)} disabled={!isReady || entering} />
-              <span className="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                {isReady ? "Command center ready" : "Awaiting core synchronization"}
-              </span>
+              {!isReady ? (
+                <span className="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                  Awaiting core synchronization
+                </span>
+              ) : null}
             </div>
           </div>
 

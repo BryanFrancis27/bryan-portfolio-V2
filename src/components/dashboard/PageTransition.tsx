@@ -1,41 +1,29 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion, type Variants } from "framer-motion";
-import { getNavigationDirection, type NavigationDirection } from "@/data/navigation";
 
 export function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const previousPathname = useRef<string | null>(null);
   const reduceMotion = useReducedMotion();
-  const direction = useMemo(
-    () => getNavigationDirection(previousPathname.current, pathname),
-    [pathname],
-  );
-
-  useEffect(() => {
-    previousPathname.current = pathname;
-  }, [pathname]);
-
   const variants = reduceMotion ? reducedMotionVariants : directionalVariants;
 
   return (
-    <div className="relative w-full min-w-0 overflow-x-hidden">
-      <AnimatePresence mode="wait" initial={false} custom={direction}>
+    <div className="relative w-full min-w-0 overflow-x-clip">
+      <AnimatePresence mode="popLayout" initial={false}>
         <motion.div
           key={pathname}
-          custom={direction}
           variants={variants}
           initial="enter"
           animate="center"
           exit="exit"
           transition={{
-            duration: reduceMotion ? 0.08 : 0.34,
-            ease: [0.22, 1, 0.36, 1],
+            scale: { duration: reduceMotion ? 0.08 : 0.68, delay: reduceMotion ? 0 : 0.1, ease: [0.32, 0, 0.2, 1] },
+            y: { duration: reduceMotion ? 0.08 : 0.68, delay: reduceMotion ? 0 : 0.1, ease: [0.32, 0, 0.2, 1] },
+            opacity: { duration: reduceMotion ? 0.08 : 0.46, delay: reduceMotion ? 0 : 0.1, ease: "easeIn" },
           }}
-          className="w-full min-w-0 will-change-transform"
-          style={{ backfaceVisibility: "hidden" }}
+          className="w-full min-w-0 transform-gpu [will-change:transform,opacity]"
+          style={{ backfaceVisibility: "hidden", transformOrigin: "50% 0%" }}
         >
           {children}
         </motion.div>
@@ -44,28 +32,22 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
   );
 }
 
-const horizontalOffset: Record<NavigationDirection, number> = {
-  forward: 32,
-  backward: -32,
-  neutral: 0,
-};
-
 const directionalVariants: Variants = {
-  enter: (direction: NavigationDirection) => ({
-    opacity: direction === "neutral" ? 0 : 0.72,
-    x: horizontalOffset[direction],
-    filter: direction === "neutral" ? "blur(4px)" : "blur(2px)",
-  }),
+  enter: {
+    opacity: 0.84,
+    scale: 0.975,
+    y: 10,
+  },
   center: {
     opacity: 1,
-    x: 0,
-    filter: "blur(0px)",
+    scale: 1,
+    y: 0,
   },
-  exit: (direction: NavigationDirection) => ({
-    opacity: direction === "neutral" ? 0 : 0.72,
-    x: -horizontalOffset[direction],
-    filter: direction === "neutral" ? "blur(4px)" : "blur(2px)",
-  }),
+  exit: {
+    opacity: 0,
+    scale: 1.012,
+    y: -6,
+  },
 };
 
 const reducedMotionVariants: Variants = {
