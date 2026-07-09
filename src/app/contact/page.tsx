@@ -9,7 +9,7 @@ export default function ContactPage() {
   return (
     <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(18rem,0.8fr)_minmax(0,1.2fr)] 2xl:grid-cols-[minmax(22rem,0.7fr)_minmax(0,1.3fr)]">
       <section className="alien-panel rounded-lg border border-white/[0.08] p-6 md:p-8">
-        <div className="overflow-hidden rounded-lg border border-white/[0.08] bg-white/[0.025] grayscale">
+        <div className="overflow-hidden rounded-lg border border-white/[0.08] bg-white/[0.025]">
           <Image
             src={profileImage}
             alt="Portrait of Bryan Encarnacion"

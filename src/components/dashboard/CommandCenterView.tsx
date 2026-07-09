@@ -11,11 +11,17 @@ import { systems } from "@/data/systems";
 import { cn } from "@/lib/utils";
 
 const quickLinks = [
-  { label: "System Registry", href: "/systems", description: "BryanOS and LunarLedger files" },
+  { label: "System Registry", href: "/systems", description: "Personal and capstone system files" },
   { label: "Foundation Timeline", href: "/timeline", description: "Education and training path" },
   { label: "Experience Matrix", href: "/experience", description: "Professional operating history" },
   { label: "Contact Channel", href: "/contact", description: "Verified communication links" },
 ];
+
+const systemSignals: Record<string, string> = {
+  BryanOS: "Artificial operating system",
+  LunarLedger: "Personal project",
+  "AutoCare+": "Capstone project",
+};
 
 export function CommandCenterView() {
   return (
@@ -64,7 +70,7 @@ export function CommandCenterView() {
                 <div className="min-w-0">
                   <span className="font-medium text-white">{system.name}</span>
                   <p className="mt-1 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
-                    {system.name === "LunarLedger" ? "Personal project" : "Artificial operating system"}
+                    {systemSignals[system.name] ?? system.type}
                   </p>
                 </div>
                 <SystemStatusBadge status={system.status} />

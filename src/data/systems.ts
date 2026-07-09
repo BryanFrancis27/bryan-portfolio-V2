@@ -53,4 +53,38 @@ export const systems: System[] = [
       "Utility-driven budgeting",
     ],
   },
+  {
+    name: "AutoCare+",
+    status: "PERSONAL PROJECT",
+    type: "CAPSTONE PRODUCT SYSTEM",
+    purpose: "Vehicle maintenance tracking dashboard for owners managing records and service reminders.",
+    description:
+      "A full-stack vehicle maintenance tracker that helps vehicle owners manage service history, track reminders, and organize vehicle records through a secure Supabase-backed dashboard.",
+    stack: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "Supabase",
+      "PostgreSQL",
+      "Framer Motion",
+    ],
+    contributions: [
+      "Built protected dashboard workflows for vehicle records, maintenance logs, and reminders.",
+      "Implemented owner-based data access with Supabase authentication and row-level security.",
+      "Created a rule-based maintenance engine using vehicle details, mileage, and service history.",
+    ],
+    highlights: [
+      "Vehicle CRUD",
+      "Maintenance logs",
+      "Service reminders",
+      "Owner-based access",
+    ],
+    signals: [
+      "Capstone project",
+      "Supabase-backed dashboard",
+      "Authentication and protected routes",
+      "Rule-based reminder engine",
+    ],
+  },
 ];

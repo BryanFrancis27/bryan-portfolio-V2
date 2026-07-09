@@ -3,8 +3,8 @@ import type { ActivityPoint, Metric } from "@/types/dashboard";
 export const metrics: Metric[] = [
   {
     label: "Memory Modules",
-    value: "02",
-    detail: "BryanOS and LunarLedger",
+    value: "03",
+    detail: "BryanOS, LunarLedger, and AutoCare+",
     trend: "system registry",
   },
   {
@@ -29,9 +29,9 @@ export const metrics: Metric[] = [
 
 export const activityPoints: ActivityPoint[] = [
   { label: "Plan", systems: 1, features: 3 },
-  { label: "Build", systems: 2, features: 6 },
-  { label: "Ship", systems: 2, features: 4 },
-  { label: "Refine", systems: 2, features: 5 },
+  { label: "Build", systems: 3, features: 6 },
+  { label: "Ship", systems: 3, features: 4 },
+  { label: "Refine", systems: 3, features: 5 },
 ];
 
 export const currentFocus = [
@@ -41,7 +41,7 @@ export const currentFocus = [
 ];
 
 export const recentActivity = [
-  "System registry limited to BryanOS and LunarLedger.",
+  "System registry expanded with AutoCare+ capstone system.",
   "Experience matrix indexed SportsPilotAI and eduClaaS responsibilities.",
   "Monochrome command interface activated.",
 ];
