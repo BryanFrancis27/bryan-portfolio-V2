@@ -16,7 +16,7 @@ export function SimulationLanding() {
   const handleBootComplete = useCallback(() => setIsReady(true), []);
 
   return (
-    <main className="relative flex min-h-dvh flex-col overflow-x-hidden bg-background px-4 pb-24 pt-5 text-foreground sm:px-6 lg:px-8 lg:pb-5">
+    <main className="relative flex min-h-dvh flex-col overflow-x-clip bg-background px-4 pb-24 pt-5 text-foreground sm:px-6 lg:px-8 lg:pb-5">
       <SystemBackground />
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
         <motion.div

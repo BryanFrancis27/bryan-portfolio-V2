@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import type { StaticImageData } from "next/image";
 
 export type SystemStatus = "ACTIVE" | "PRODUCTION" | "PERSONAL PROJECT" | "ARCHIVED";
 
@@ -16,11 +17,15 @@ export interface ActivityPoint {
 }
 
 export interface System {
+  id: string;
   name: string;
   status: SystemStatus;
   type: string;
   purpose: string;
   description: string;
+  image?: StaticImageData | string;
+  imageAlt?: string;
+  projectUrl?: string;
   stack: string[];
   contributions: string[];
   highlights: string[];

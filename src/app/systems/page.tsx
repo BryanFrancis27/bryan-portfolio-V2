@@ -1,9 +1,9 @@
-import { SystemCard } from "@/components/systems/SystemCard";
+import { SystemRegistry } from "@/components/systems/SystemRegistry";
 import { systems } from "@/data/systems";
 
 export default function SystemsPage() {
   return (
-    <div className="w-full min-w-0 space-y-8">
+    <div className="w-full min-w-0 space-y-7">
       <section className="max-w-5xl">
         <p className="font-mono text-sm uppercase tracking-[0.2em] text-zinc-400">
           System Registry
@@ -13,11 +13,7 @@ export default function SystemsPage() {
           Bryan&apos;s personal systems shown as operating files. Company work stays in the Experience Matrix.
         </p>
       </section>
-      <section className="grid min-w-0 gap-6 lg:grid-cols-2 2xl:grid-cols-3">
-        {systems.map((system) => (
-          <SystemCard key={system.name} system={system} />
-        ))}
-      </section>
+      <SystemRegistry systems={systems} />
     </div>
   );
 }

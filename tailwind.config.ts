@@ -9,6 +9,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        "desktop-tall": { raw: "(min-width: 64rem) and (min-height: 48rem)" },
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

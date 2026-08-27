@@ -4,7 +4,7 @@ export const experienceRoles: ExperienceRole[] = [
   {
     role: "Software Engineer",
     company: "SportsPilotAI",
-    period: "December 2025 - Present",
+    period: "December 2025 - July 2026",
     summary:
       "Develops and maintains AI-powered SaaS platforms with full-stack product responsibilities.",
     responsibilities: [

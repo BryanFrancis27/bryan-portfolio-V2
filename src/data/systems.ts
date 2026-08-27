@@ -2,6 +2,7 @@ import type { System } from "@/types/dashboard";
 
 export const systems: System[] = [
   {
+    id: "bryanos",
     name: "BryanOS",
     status: "ACTIVE",
     type: "ARTIFICIAL OPERATING SYSTEM",
@@ -28,6 +29,7 @@ export const systems: System[] = [
     ],
   },
   {
+    id: "lunar-ledger",
     name: "LunarLedger",
     status: "PERSONAL PROJECT",
     type: "PERSONAL PRODUCT SYSTEM",
@@ -54,6 +56,7 @@ export const systems: System[] = [
     ],
   },
   {
+    id: "autocare-plus",
     name: "AutoCare+",
     status: "PERSONAL PROJECT",
     type: "CAPSTONE PRODUCT SYSTEM",

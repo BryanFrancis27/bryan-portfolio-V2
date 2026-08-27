@@ -8,7 +8,7 @@ import { SystemBackground } from "@/components/shared/SystemBackground";
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative min-h-screen overflow-x-hidden">
+    <div className="relative min-h-screen overflow-x-clip">
       <SystemBackground />
       <header className="sticky top-0 z-30 border-b border-white/[0.07] bg-background/82 backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-[112rem] flex-col gap-4 px-4 py-3 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:pl-28 xl:pr-10 2xl:pr-12">
